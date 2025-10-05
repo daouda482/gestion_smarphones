@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/daouda482/gestion-smartphones.git'
+                git branch: 'main', url: 'https://github.com/daouda482/gestion_smarphones.git'
             }
         }
 
@@ -32,25 +32,19 @@ pipeline {
 
         stage('Docker Build & Up') {
             steps {
-                bat "docker-compose -f \"${DOCKER_COMPOSE_PATH}\" build"
-                bat "docker-compose -f \"${DOCKER_COMPOSE_PATH}\" up -d"
+                bat "docker-compose -f ${DOCKER_COMPOSE_PATH} build"
+                bat "docker-compose -f ${DOCKER_COMPOSE_PATH} up -d"
             }
         }
-    } // end stages
+    }
 
     post {
         success {
-            echo '✅ Build réussi.'
-            mail to: "${NOTIFY_EMAIL}",
-                 subject: "✅ Build réussi : ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                 body: "Le build s'est terminé avec succès.\n\nDétails : ${env.BUILD_URL}"
+            echo 'Build and deployment successful!'
         }
-
         failure {
-            echo '❌ Build échoué.'
-            mail to: "${NOTIFY_EMAIL}",
-                 subject: "❌ Build échoué : ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                 body: "Le build a échoué.\n\nConsultez les logs ici : ${env.BUILD_URL}"
+            echo 'Build failed.'
         }
-    } // end post
-} // end pipeline
+    }
+
+}
