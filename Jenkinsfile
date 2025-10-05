@@ -31,11 +31,11 @@ pipeline {
         }
 
         stage('Docker Build & Up') {
-            steps {
-                bat "docker-compose -f ${DOCKER_COMPOSE_PATH} build"
-                bat "docker-compose -f ${DOCKER_COMPOSE_PATH} up -d"
-            }
-        }
+    steps {
+        bat "docker-compose -f \"${DOCKER_COMPOSE_PATH}\" build"
+        bat "docker-compose -f \"${DOCKER_COMPOSE_PATH}\" up -d"
+    }
+}
     }
 
     post {
