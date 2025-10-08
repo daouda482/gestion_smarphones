@@ -4,6 +4,7 @@ pipeline {
     environment {
         DOCKER_COMPOSE_PATH = "C:\\Users\\bmd tech\\Documents\\gestion-smartphones\\docker-compose.yml"
         NOTIFY_EMAIL = "daoudaba679@gmail.com"
+        SONAR_AUTH_TOKEN = Secret text
         SONARQUBE_ENV = 'SonarQubeServer' // Nom configuré dans Jenkins
         SCANNER_TOOL = 'SonarScanner' // Nom du scanner ajouté dans Global Tool Configuration
     }
@@ -44,8 +45,8 @@ pipeline {
 
                         bat """
                             "${scannerHome}\\bin\\sonar-scanner" ^
-                            -Dsonar.projectKey=gestion-smartphones ^
-                            -Dsonar.projectName="Gestion Smartphones" ^
+                            -Dsonar.projectKey=gestion-smartphone ^
+                            -Dsonar.projectName="gestion-martphone" ^
                             -Dsonar.sources=. ^
                             -Dsonar.host.url=${SONAR_HOST_URL} ^
                             -Dsonar.login=${SONAR_AUTH_TOKEN}
