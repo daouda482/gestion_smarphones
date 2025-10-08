@@ -34,7 +34,7 @@ pipeline {
                 echo "🔍 Analyse du code avec SonarQube..."
                 withSonarQubeEnv('SonarQube_Local') {  // nom du serveur SonarQube défini dans Jenkins
                     withCredentials([string(credentialsId: 'sonar', variable: 'SONAR_TOKEN')]) {
-                        sh """
+                        bat """
                             sonar-scanner \
                               -Dsonar.projectKey=fil-rouge \
                               -Dsonar.projectName='Projet Fil Rouge' \
