@@ -4,7 +4,12 @@ pipeline {
     environment {
         DOCKER_COMPOSE_PATH = "C:\\Users\\bmd tech\\Documents\\gestion-smartphones\\docker-compose.yml"
         NOTIFY_EMAIL = "daoudaba679@gmail.com"
+<<<<<<< HEAD
         SONAR_TOKEN = credentials('sonar_id')
+=======
+        SONARQUBE_ENV = 'SonarQubeServer' // Nom configuré dans Jenkins
+        SCANNER_TOOL = 'SonarScanner' // Nom du scanner ajouté dans Global Tool Configuration
+>>>>>>> 23269c7 (J'ai modifié mon fichier jenkinsfile à nouveau)
     }
 
     stages {
@@ -37,6 +42,7 @@ pipeline {
 
 stage('SonarQube Analysis') {
             steps {
+<<<<<<< HEAD
                 echo "Analyse du code avec SonarQube"
                 withSonarQubeEnv('SonarQube_Local') {
                     withCredentials([string(credentialsId: 'sonar_db', variable: 'SONAR_TOKEN')]) {
@@ -47,11 +53,45 @@ stage('SonarQube Analysis') {
                             -Dsonar.host.url=$SONAR_HOST_URL \
                             -Dsonar.login=$SONAR_TOKEN
                         """
+=======
+                script {
+                    // Injection de l'environnement SonarQube configuré dans Jenkins
+                    withSonarQubeEnv("${SONARQUBE_ENV}") {
+                        // Détection automatique du chemin du sonar-scanner
+                        def scannerHome = tool name: "${SCANNER_TOOL}", type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+
+                        bat """
+                            "${scannerHome}\\bin\\sonar-scanner" ^
+                            -Dsonar.projectKey=gestion-smartphones ^
+                            -Dsonar.projectName="Gestion Smartphones" ^
+                            -Dsonar.sources=. ^
+                            -Dsonar.host.url=${SONAR_HOST_URL} ^
+                            -Dsonar.login=${SONAR_AUTH_TOKEN}
+                        """
                     }
                 }
             }
         }
 
+        // ✅ Vérification du Quality Gate
+        stage('Quality Gate') {
+            steps {
+                script {
+                    timeout(time: 3, unit: 'MINUTES') {
+                        def qg = waitForQualityGate()
+                        echo "Quality Gate status: ${qg.status}"
+                        if (qg.status != 'OK') {
+                            error "❌ Build stopped — Quality Gate failed (${qg.status})"
+                        } else {
+                            echo "✅ Quality Gate passed!"
+                        }
+>>>>>>> 23269c7 (J'ai modifié mon fichier jenkinsfile à nouveau)
+                    }
+                }
+            }
+        }
+
+        // 🐳 Construction et déploiement Docker
         stage('Docker Build & Up') {
             steps {
                 echo " Construction et déploiement des conteneurs Docker..."
@@ -60,12 +100,18 @@ stage('SonarQube Analysis') {
             }
         }
 
+        // ✉️ Notification
         stage('Send Notification') {
             steps {
                 echo " Envoi de la notification par mail..."
                 mail to: "${NOTIFY_EMAIL}",
+<<<<<<< HEAD
                      subject: " Jenkins Build Notification",
                      body: "Le build et le déploiement Jenkins se sont terminés avec succès !"
+=======
+                     subject: "Jenkins Build Notification",
+                     body: "✅ Jenkins build and deployment completed successfully."
+>>>>>>> 23269c7 (J'ai modifié mon fichier jenkinsfile à nouveau)
             }
         }
     }
