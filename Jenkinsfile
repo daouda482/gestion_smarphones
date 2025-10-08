@@ -19,10 +19,10 @@ pipeline {
         // -----------------------
         // 1️⃣ Récupération du code
         // -----------------------
+        stages {
         stage('Checkout') {
             steps {
-                echo "📦 Récupération du code depuis GitHub..."
-                git branch: 'main', url: 'https://github.com/mhdgeek/express_mongo_react.git'
+                git branch: 'main', url: 'https://github.com/daouda482/gestion_smarphones.git'
             }
         }
 
