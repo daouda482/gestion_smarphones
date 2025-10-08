@@ -12,14 +12,11 @@ pipeline {
         SONAR_HOST_URL  = 'http://localhost:9000/'   // SonarQube local
     }
 
-  
-
     stages {
 
         // -----------------------
         // 1️⃣ Récupération du code
         // -----------------------
-        stages {
         stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/daouda482/gestion_smarphones.git'
@@ -82,11 +79,10 @@ pipeline {
                     }
                 }
             }
-        } // 👈👉 Accolade fermante manquante ajoutée ici !
+        }
 
-        
         // -----------------------
-        // 6️⃣ Build Docker
+        // 5️⃣ Build Docker
         // -----------------------
         stage('Build Docker Images') {
             steps {
@@ -99,7 +95,7 @@ pipeline {
         }
 
         // -----------------------
-        // 7️⃣ Push Docker Hub
+        // 6️⃣ Push Docker Hub
         // -----------------------
         stage('Push Docker Images') {
             steps {
@@ -115,7 +111,7 @@ pipeline {
         }
 
         // -----------------------
-        // 8️⃣ Déploiement Docker Compose
+        // 7️⃣ Déploiement Docker Compose
         // -----------------------
         stage('Deploy') {
             steps {
@@ -130,7 +126,7 @@ pipeline {
         }
 
         // -----------------------
-        // 9️⃣ Tests de disponibilité
+        // 8️⃣ Tests de disponibilité
         // -----------------------
         stage('Smoke Test') {
             steps {
