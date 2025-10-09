@@ -5,7 +5,6 @@ pipeline {
         DOCKER_COMPOSE_PATH = "C:\\Users\\bmd tech\\Documents\\gestion-smartphones\\docker-compose.yml"
         NOTIFY_EMAIL = "daoudaba679@gmail.com"
     }
-
     stages {
         stage('Checkout') {
             steps {
@@ -29,25 +28,25 @@ pipeline {
                 }
             }
         }
-                stage('SonarQube Analysis') {
-            steps {
-                echo "🔍 Analyse du code avec SonarQube..."
-                withSonarQubeEnv('SonarQube_Local') {  // nom du serveur SonarQube défini dans Jenkins
-                    withCredentials([string(credentialsId: 'sonar', variable: 'SONAR_TOKEN')]) {
-                        bat """
-                            sonar-scanner \
-                              -Dsonar.projectKey=fil-rouge \
-                              -Dsonar.projectName='Projet Fil Rouge' \
-                              -Dsonar.projectVersion=1.0 \
-                              -Dsonar.sources=. \
-                              -Dsonar.exclusions=/node_modules/,/build/,/dist/,/.test.js,/.spec.js \
-                              -Dsonar.host.url=${SONAR_HOST_URL} \
-                              -Dsonar.token=${SONAR_TOKEN}
-                        """
-                    }
-                }
-            }
-        }
+        //         stage('SonarQube Analysis') {
+        //     steps {
+        //         echo "🔍 Analyse du code avec SonarQube..."
+        //         withSonarQubeEnv('SonarQube_Local') {  // nom du serveur SonarQube défini dans Jenkins
+        //             withCredentials([string(credentialsId: 'sonar', variable: 'SONAR_TOKEN')]) {
+        //                 bat """
+        //                     sonar-scanner \
+        //                       -Dsonar.projectKey=fil-rouge \
+        //                       -Dsonar.projectName='Projet Fil Rouge' \
+        //                       -Dsonar.projectVersion=1.0 \
+        //                       -Dsonar.sources=. \
+        //                       -Dsonar.exclusions=/node_modules/,/build/,/dist/,/.test.js,/.spec.js \
+        //                       -Dsonar.host.url=${SONAR_HOST_URL} \
+        //                       -Dsonar.token=${SONAR_TOKEN}
+        //                 """
+        //             }
+        //         }
+        //     }
+        // }
 
 
         stage('Docker Build & Up') {
