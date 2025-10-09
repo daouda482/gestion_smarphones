@@ -1,168 +1,78 @@
 pipeline {
     agent any
 
-    tools {
-        nodejs "NodeJS_16"
-        // 👇 nom configuré dans Manage Jenkins > Tools > SonarQube Scanner installations
-        sonarQubeScanner "SonarScanner"
-    }
-
     environment {
-        DOCKER_HUB_USER = 'kao123'
-        FRONT_IMAGE     = 'react-frontend'
-        BACK_IMAGE      = 'express-backend'
-        SONAR_HOST_URL  = 'http://localhost:9000'
+        DOCKER_COMPOSE_PATH = "C:\\Users\\bmd tech\\Documents\\gestion-smartphones\\docker-compose.yml"
+        NOTIFY_EMAIL = "daoudaba679@gmail.com"
     }
 
     stages {
-
-        // ------------------------------
-        // 1️⃣ Récupération du code source
-        // ------------------------------
         stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/daouda482/gestion_smarphones.git'
             }
         }
 
-        // ------------------------------
-        // 2️⃣ Installation des dépendances
-        // ------------------------------
-        stage('Install Dependencies') {
-            parallel {
-                stage('Backend') {
-                    steps {
-                        dir('back-end') {
-                            bat 'npm install'
-                        }
-                    }
-                }
-                stage('Frontend') {
-                    steps {
-                        dir('front-end') {
-                            bat 'npm install'
-                        }
-                    }
-                }
-            }
-        }
-
-        // ------------------------------
-        // 3️⃣ Tests unitaires
-        // ------------------------------
-        stage('Run Tests') {
+        stage('Install Backend') {
             steps {
-                echo "🧪 Exécution des tests..."
-                bat '''
-                    cd back-end && npm test || echo "⚠ Aucun test backend"
-                    cd ../front-end && npm test || echo "⚠ Aucun test frontend"
-                '''
+                dir('gestion-smartphone-backend') {
+                    bat 'npm install'
+                }
             }
         }
 
-        // ------------------------------
-        // 4️⃣ Analyse du code SonarQube
-        // ------------------------------
-        stage('SonarQube Analysis') {
+        stage('Install & Build Frontend') {
+            steps {
+                dir('gestion-smartphone-frontend') {
+                    bat 'npm install'
+                    bat 'npm run build'
+                }
+            }
+        }
+                stage('SonarQube Analysis') {
             steps {
                 echo "🔍 Analyse du code avec SonarQube..."
-                withSonarQubeEnv('SonarQube_Local') { // 👈 nom du serveur configuré dans Jenkins > Manage Jenkins > SonarQube
-                    withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
-                        bat '''
-                            sonar-scanner ^
-                              -Dsonar.projectKey=fil-rouge ^
-                              -Dsonar.projectName="Projet Fil Rouge" ^
-                              -Dsonar.projectVersion=1.0 ^
-                              -Dsonar.sources=. ^
-                              -Dsonar.exclusions=/node_modules/,/build/,/dist/,/*.test.js,/*.spec.js ^
-                              -Dsonar.host.url=http://localhost:9000 ^
-                              -Dsonar.token=%SONAR_TOKEN%
-                        '''
+                withSonarQubeEnv('SonarQube_Local') {  // nom du serveur SonarQube défini dans Jenkins
+                    withCredentials([string(credentialsId: 'sonar', variable: 'SONAR_TOKEN')]) {
+                        bat """
+                            sonar-scanner \
+                              -Dsonar.projectKey=fil-rouge \
+                              -Dsonar.projectName='Projet Fil Rouge' \
+                              -Dsonar.projectVersion=1.0 \
+                              -Dsonar.sources=. \
+                              -Dsonar.exclusions=/node_modules/,/build/,/dist/,/.test.js,/.spec.js \
+                              -Dsonar.host.url=${SONAR_HOST_URL} \
+                              -Dsonar.token=${SONAR_TOKEN}
+                        """
                     }
                 }
             }
         }
 
-        // ------------------------------
-        // 5️⃣ Build des images Docker
-        // ------------------------------
-        stage('Build Docker Images') {
-            steps {
-                echo "🐳 Construction des images Docker..."
-                bat """
-                    docker build -t %DOCKER_HUB_USER%/%BACK_IMAGE%:latest ./back-end
-                    docker build -t %DOCKER_HUB_USER%/%FRONT_IMAGE%:latest ./front-end
-                """
-            }
-        }
 
-        // ------------------------------
-        // 6️⃣ Push vers Docker Hub
-        // ------------------------------
-        stage('Push Docker Images') {
-            steps {
-                echo "📤 Envoi des images sur Docker Hub..."
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                    bat '''
-                        echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin
-                        docker push %DOCKER_USER%/react-frontend:latest
-                        docker push %DOCKER_USER%/express-backend:latest
-                    '''
-                }
-            }
-        }
+        stage('Docker Build & Up') {
+    steps {
+        bat "docker-compose -f \"${DOCKER_COMPOSE_PATH}\" build"
+        bat "docker-compose -f \"${DOCKER_COMPOSE_PATH}\" up -d"
+    }
+}
 
-        // ------------------------------
-        // 7️⃣ Déploiement via Docker Compose
-        // ------------------------------
-        stage('Deploy') {
+         stage('Send Notification') {
             steps {
-                echo "🚀 Déploiement via docker-compose..."
-                bat '''
-                    docker-compose -f compose.yaml down || echo "Aucun service en cours"
-                    docker-compose -f compose.yaml pull
-                    docker-compose -f compose.yaml up -d
-                    docker-compose ps
-                '''
+                 mail to: "${NOTIFY_EMAIL}",
+                     subject: "Jenkins Build Notification",
+                     body: "The Jenkins build and deployment process has completed successfully."
             }
-        }
-
-        // ------------------------------
-        // 8️⃣ Tests de disponibilité
-        // ------------------------------
-        stage('Smoke Test') {
-            steps {
-                echo "🔎 Vérification des services..."
-                bat '''
-                    echo "Frontend (port 5173):"
-                    curl -f http://localhost:5173 || echo "⚠ Frontend inaccessible"
-                    echo "Backend (port 5001):"
-                    curl -f http://localhost:5001/api || echo "⚠ Backend inaccessible"
-                '''
-            }
-        }
+         }
     }
 
     post {
         success {
-            echo "✅ Pipeline terminé avec succès !"
-            emailext(
-                subject: "✅ SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                body: """
-                ✅ Build réussi pour ${env.JOB_NAME} #${env.BUILD_NUMBER}
-                🔗 Détails: ${env.BUILD_URL}
-                🔍 Analyse SonarQube: ${SONAR_HOST_URL}/dashboard?id=fil-rouge
-                """,
-                to: "omzokao99@gmail.com"
-            )
+            echo 'Build and deployment successful!'
         }
         failure {
-            echo "❌ Échec du pipeline."
-            emailext(
-                subject: "❌ FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                body: "Le pipeline a échoué 💥\n\nDétails : ${env.BUILD_URL}",
-                to: "omzokao99@gmail.com"
-            )
+            echo 'Build failed.'
         }
     }
+
 }
