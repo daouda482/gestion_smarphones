@@ -4,6 +4,7 @@ pipeline {
     environment {
         DOCKER_COMPOSE_PATH = "C:\\Users\\bmd tech\\Documents\\gestion-smartphones\\docker-compose.yml"
         NOTIFY_EMAIL = "daoudaba679@gmail.com"
+        SONAR_SCANNER_HOME = \\bin\\sonar-scanner.bat" 
     }
 
     stages {
