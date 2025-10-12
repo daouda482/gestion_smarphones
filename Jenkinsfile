@@ -44,7 +44,7 @@ pipeline {
                             bat """
                                 echo Lancement de l'analyse SonarQube...
                                 "${sonarScannerHome}\\bin\\sonar-scanner.bat" ^
-                                -Dsonar.projectKey=gestion-de-smartphone ^_
+                                -Dsonar.projectKey=gestion-smartphone ^_
                                 -Dsonar.sources=. ^
                                 -Dsonar.host.url=http://localhost:9000 ^
                                 -Dsonar.login=%SONAR_TOKEN%
