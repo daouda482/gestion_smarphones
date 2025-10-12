@@ -39,7 +39,7 @@ pipeline {
             steps {
                 echo "🔍 Analyse du code avec SonarQube..."
                 withSonarQubeEnv('SonarQube_Local') { // Nom du serveur configuré dans Jenkins
-                    withCredentials([string(credentialsId: 'sonar-id', variable: 'SONAR_TOKEN')]) {
+                    withCredentials([string(credentialsId: 'sonar-id', variable: 'SONAR-ID')]) {
                         script {
                             def scannerHome = tool 'SonarScanner' // Nom configuré dans Jenkins > Tools
                             bat '''
