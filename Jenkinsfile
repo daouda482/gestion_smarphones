@@ -44,8 +44,8 @@ pipeline {
                             def scannerHome = tool 'SonarScanner' // Nom configuré dans Jenkins > Tools
                             bat '''
                                 "%scannerHome%\\bin\\sonar-scanner.bat" ^
-                                  -Dsonar.projectKey=fil-rouge ^
-                                  -Dsonar.projectName="Projet Fil Rouge" ^
+                                  -Dsonar.projectKey=gestion-smartphone ^
+                                  -Dsonar.projectName="gestion-smartphone" ^
                                   -Dsonar.projectVersion=1.0 ^
                                   -Dsonar.sources=. ^
                                   -Dsonar.exclusions=/node_modules/,/build/,/dist/,/.test.js,/.spec.js ^
