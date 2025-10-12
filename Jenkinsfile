@@ -35,23 +35,20 @@ pipeline {
             }
         }
 
-        stage('SonarQube Analysis') {
+       stage('Analyse SonarQube') {
             steps {
-                echo "🔍 Analyse du code avec SonarQube..."
-                withSonarQubeEnv('SonarQube_Local') { // Nom du serveur configuré dans Jenkins
-                    withCredentials([string(credentialsId: 'sonar_id', variable: 'SONAR_TOKEN')]) {
-                        script {
-                            def scannerHome = tool 'SonarScanner' // Nom configuré dans Jenkins > Tools
-                            bat '''
-                                "%scannerHome%\\bin\\sonar-scanner.bat" ^
-                                  -Dsonar.projectKey=gestion-smartphone ^
-                                  -Dsonar.projectName="gestion-smartphone" ^
-                                  -Dsonar.projectVersion=1.0 ^
-                                  -Dsonar.sources=. ^
-                                   
-                                -Dsonar.host.url=http://localhost:9000%SONAR_HOST_URL% ^
-                                -Dsonar.token=%SONAR_TOKEN%
-                            '''
+                script {
+                    def sonarScannerHome = tool name: 'SonarScanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+                    withSonarQubeEnv('SonarQube_Local') {
+                        withCredentials([string(credentialsId: 'sonar_id', variable: 'SONAR_TOKEN')]) {
+                            bat """
+                                echo Lancement de l'analyse SonarQube...
+                                "${sonarScannerHome}\\bin\\sonar-scanner.bat" ^
+                                -Dsonar.projectKey=gestion-de-smartphone ^_
+                                -Dsonar.sources=. ^
+                                -Dsonar.host.url=http://localhost:9000 ^
+                                -Dsonar.login=%SONAR_TOKEN%
+                            """
                         }
                     }
                 }
