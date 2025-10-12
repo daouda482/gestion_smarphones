@@ -48,9 +48,9 @@ pipeline {
                                   -Dsonar.projectName="gestion-smartphone" ^
                                   -Dsonar.projectVersion=1.0 ^
                                   -Dsonar.sources=. ^
-                                  -Dsonar.exclusions=/node_modules/,/build/,/dist/,/.test.js,/.spec.js ^
-                                  -Dsonar.host.url=%SONAR_HOST_URL% ^
-                                  -Dsonar.token=%SONAR_TOKEN%
+                                   
+                                -Dsonar.host.url=http://localhost:9000%SONAR_HOST_URL% ^
+                                -Dsonar.token=%SONAR_TOKEN%
                             '''
                         }
                     }
