@@ -4,6 +4,7 @@ pipeline {
     environment {
         DOCKER_COMPOSE_PATH = "C:\\Users\\bmd tech\\Documents\\gestion-smartphones\\docker-compose.yml"
         NOTIFY_EMAIL = "daoudaba679@gmail.com"
+        SONAR-ID = credentials('sonar-id')
     }
 
     stages {
@@ -38,7 +39,7 @@ pipeline {
             steps {
                 echo "🔍 Analyse du code avec SonarQube..."
                 withSonarQubeEnv('SonarQube_Local') { // Nom du serveur configuré dans Jenkins
-                    withCredentials([string(credentialsId: 'sonar', variable: 'SONAR_TOKEN')]) {
+                    withCredentials([string(credentialsId: 'sonar-id', variable: 'SONAR_TOKEN')]) {
                         script {
                             def scannerHome = tool 'SonarScanner' // Nom configuré dans Jenkins > Tools
                             bat '''
