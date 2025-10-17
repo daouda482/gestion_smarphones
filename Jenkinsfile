@@ -4,8 +4,9 @@ pipeline {
     environment {
         DOCKER_COMPOSE_PATH = "C:\\Users\\bmd tech\\Documents\\gestion-smartphones\\docker-compose.yml"
         NOTIFY_EMAIL = "daoudaba679@gmail.com"
-        SONARQUBE_ENV = 'SonarQubeServer'           // Nom configuré dans Jenkins
-        SCANNER_TOOL = 'SonarQube_Scanner'         // Nom du scanner ajouté dans Global Tool Configuration
+        SONAR_TOKEN = credentials('sonar_db')
+        SONARQUBE_ENV = 'SonarQubeServer' // Nom configuré dans Jenkins
+        SCANNER_TOOL = 'SonarQube_Scanner' // Nom du scanner ajouté dans Global Tool Configuration
     }
 
     stages {
@@ -36,42 +37,38 @@ pipeline {
             }
         }
 
-        // stage('SonarQube Analysis') {
-        //     steps {
-        //         echo "Analyse du code avec SonarQube"
-        //         withCredentials([string(credentialsId: 'sonar_token', variable: 'sonar_token')]) {
-        //             withSonarQubeEnv("${SONARQUBE_ENV}") {
-        //                 script {
-        //                     def scannerHome = tool name: "${SCANNER_TOOL}", type: 'hudson.plugins.sonar.SonarRunnerInstallation'
-        //                     bat """
-        //                         "${scannerHome}\\bin\\sonar-scanner" ^
-        //                         -Dsonar.projectKey=gestion-smartphones ^
-        //                         -Dsonar.projectName="gestion-smartphone" ^
-        //                         -Dsonar.sources=. ^
-        //                         -Dsonar.host.url=http://localhost:9000 ^
-        //                         -Dsonar.login=${SONAR_TOKEN}
-        //                     """
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
+        stage('SonarQube Analysis') {
+            steps {
+                echo "Analyse du code avec SonarQube"
+                withSonarQubeEnv("${SONARQUBE_ENV}") {
+                    def scannerHome = tool name: "${SCANNER_TOOL}", type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+                    bat """
+                        "${scannerHome}\\bin\\sonar-scanner" ^
+                        -Dsonar.projectKey=gestion-smartphones ^
+                        -Dsonar.projectName="Gestion Smartphones" ^
+                        -Dsonar.sources=. ^
+                        -Dsonar.host.url=http://localhost:9000 ^
+                        -Dsonar.login=${SONAR_TOKEN}
+                    """
+                }
+            }
+        }
 
-        // stage('Quality Gate') {
-        //     steps {
-        //         script {
-        //             timeout(time: 3, unit: 'MINUTES') {
-        //                 def qg = waitForQualityGate()
-        //                 echo "Quality Gate status: ${qg.status}"
-        //                 if (qg.status != 'OK') {
-        //                     error "❌ Build stopped — Quality Gate failed (${qg.status})"
-        //                 } else {
-        //                     echo "✅ Quality Gate passed!"
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
+        stage('Quality Gate') {
+            steps {
+                script {
+                    timeout(time: 3, unit: 'MINUTES') {
+                        def qg = waitForQualityGate()
+                        echo "Quality Gate status: ${qg.status}"
+                        if (qg.status != 'OK') {
+                            error "❌ Build stopped — Quality Gate failed (${qg.status})"
+                        } else {
+                            echo "✅ Quality Gate passed!"
+                        }
+                    }
+                }
+            }
+        }
 
         stage('Docker Build & Up') {
             steps {
