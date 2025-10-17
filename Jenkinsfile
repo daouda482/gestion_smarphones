@@ -43,18 +43,16 @@ pipeline {
 
 stage('SonarQube Analysis') {
             steps {
-
                 echo "Analyse du code avec SonarQube"
                 withSonarQubeEnv('SonarQube_Local') {
                     withCredentials([string(credentialsId: 'sonar_db', variable: 'SONAR_TOKEN')]) {
                         bat """
                             ${tool('SonarQube_Scanner')}/bin/sonar-scanner \
                             -Dsonar.projectKey=sonarqube \
-                            -Dsonar.sources=. \ ^
-                            -Dsonar.host.url=http://localhost:9000 \
+                            -Dsonar.sources=. \
+                            -Dsonar.host.url=$SONAR_HOST_URL \
                             -Dsonar.login=$SONAR_TOKEN
                         """
-
                 script {
                     // Injection de l'environnement SonarQube configuré dans Jenkins
                     withSonarQubeEnv("${SONARQUBE_ENV}") {
@@ -86,7 +84,24 @@ stage('SonarQube Analysis') {
                         } else {
                             echo "✅ Quality Gate passed!"
                         }
-(J'ai modifié mon fichier jenkinsfile à nouveau)
+
+                    }
+                }
+            }
+        }
+
+        // ✅ Vérification du Quality Gate
+        stage('Quality Gate') {
+            steps {
+                script {
+                    timeout(time: 3, unit: 'MINUTES') {
+                        def qg = waitForQualityGate()
+                        echo "Quality Gate status: ${qg.status}"
+                        if (qg.status != 'OK') {
+                            error "❌ Build stopped — Quality Gate failed (${qg.status})"
+                        } else {
+                            echo "✅ Quality Gate passed!"
+                        }
                     }
                 }
             }
