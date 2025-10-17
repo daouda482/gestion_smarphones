@@ -11,14 +11,14 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                echo "📥 Clonage du dépôt Git..."
+                echo " Clonage du dépôt Git..."
                 git branch: 'main', url: 'https://github.com/daouda482/gestion_smarphones.git'
             }
         }
 
         stage('Install Backend') {
             steps {
-                echo "⚙️ Installation du backend..."
+                echo " Installation du backend..."
                 dir('gestion-smartphone-backend') {
                     bat 'npm install'
                 }
@@ -27,7 +27,7 @@ pipeline {
 
         stage('Install & Build Frontend') {
             steps {
-                echo "🧱 Installation et build du frontend..."
+                echo " Installation et build du frontend..."
                 dir('gestion-smartphone-frontend') {
                     bat 'npm install'
                     bat 'npm run build'
@@ -35,21 +35,18 @@ pipeline {
             }
         }
 
-       stage('Analyse SonarQube') {
+stage('SonarQube Analysis') {
             steps {
-                script {
-                    def sonarScannerHome = tool name: 'SonarScanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
-                    withSonarQubeEnv('SonarQube_Local') {
-                        withCredentials([string(credentialsId: 'sonar_id', variable: 'SONAR_TOKEN')]) {
-                            bat """
-                                echo Lancement de l'analyse SonarQube...
-                                "${sonarScannerHome}\\bin\\sonar-scanner.bat" ^
-                                -Dsonar.projectKey=gestion-smartphone ^
-                                -Dsonar.sources=. ^
-                                -Dsonar.host.url=http://localhost:9000 ^
-                                -Dsonar.login=%SONAR_TOKEN%
-                            """
-                        }
+                echo "Analyse du code avec SonarQube"
+                withSonarQubeEnv('Sonarqube_local') {
+                    withCredentials([string(credentialsId: 'sonarqube', variable: 'SONAR_TOKEN')]) {
+                        bat """
+                            ${tool('Sonarqube_scanner')}/bin/sonar-scanner \
+                            -Dsonar.projectKey=sonarqube \
+                            -Dsonar.sources=. \
+                            -Dsonar.host.url=$SONAR_HOST_URL \
+                            -Dsonar.login=$SONAR_TOKEN
+                        """
                     }
                 }
             }
@@ -57,7 +54,7 @@ pipeline {
 
         stage('Docker Build & Up') {
             steps {
-                echo "🐳 Construction et déploiement des conteneurs Docker..."
+                echo " Construction et déploiement des conteneurs Docker..."
                 bat "docker-compose -f \"${DOCKER_COMPOSE_PATH}\" build"
                 bat "docker-compose -f \"${DOCKER_COMPOSE_PATH}\" up -d"
             }
@@ -65,9 +62,9 @@ pipeline {
 
         stage('Send Notification') {
             steps {
-                echo "📧 Envoi de la notification par mail..."
+                echo " Envoi de la notification par mail..."
                 mail to: "${NOTIFY_EMAIL}",
-                     subject: "✅ Jenkins Build Notification",
+                     subject: " Jenkins Build Notification",
                      body: "Le build et le déploiement Jenkins se sont terminés avec succès !"
             }
         }
@@ -75,10 +72,10 @@ pipeline {
 
     post {
         success {
-            echo '🎉 Build et déploiement réussis !'
+            echo ' Build et déploiement réussis !'
         }
         failure {
-            echo '❌ Le build a échoué.'
+            echo ' Le build a échoué.'
         }
     }
 }
