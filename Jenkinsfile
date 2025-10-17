@@ -41,7 +41,7 @@ stage('SonarQube Analysis') {
                 withSonarQubeEnv('SonarQube_Local') {
                     withCredentials([string(credentialsId: 'sonar_db', variable: 'SONAR_TOKEN')]) {
                         bat """
-                            ${tool('Sonarqube_scanner')}/bin/sonar-scanner \
+                            ${tool('SonarQube_Scanner')}/bin/sonar-scanner \
                             -Dsonar.projectKey=sonarqube \
                             -Dsonar.sources=. \
                             -Dsonar.host.url=$SONAR_HOST_URL \
