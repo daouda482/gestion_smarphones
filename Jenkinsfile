@@ -12,7 +12,7 @@ pipeline {
 
         SONARQUBE_ENV = 'SonarQubeServer' // Nom configuré dans Jenkins
         SCANNER_TOOL = 'SonarQube_Scanner' // Nom du scanner ajouté dans Global Tool Configuration
-  (J'ai modifié mon fichier jenkinsfile à nouveau)
+
     }
 
     stages {
@@ -88,13 +88,12 @@ stage('SonarQube Analysis') {
                         } else {
                             echo "✅ Quality Gate passed!"
                         }
-(J'ai modifié mon fichier jenkinsfile à nouveau)
                     }
                 }
             }
         }
 
-        // 🐳 Construction et déploiement Docker
+        //  Construction et déploiement Docker
         stage('Docker Build & Up') {
             steps {
                 echo " Construction et déploiement des conteneurs Docker..."
@@ -103,7 +102,7 @@ stage('SonarQube Analysis') {
             }
         }
 
-        // ✉️ Notification
+        //  Notification
         stage('Send Notification') {
             steps {
                 echo " Envoi de la notification par mail..."
@@ -114,7 +113,7 @@ stage('SonarQube Analysis') {
 
                      subject: "Jenkins Build Notification",
                      body: "✅ Jenkins build and deployment completed successfully."
- (J'ai modifié mon fichier jenkinsfile à nouveau)
+
             }
         }
     }
