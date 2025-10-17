@@ -6,7 +6,7 @@ pipeline {
         DOCKER_COMPOSE_PATH = "C:\\Users\\bmd tech\\Documents\\gestion-smartphones\\docker-compose.yml"
         NOTIFY_EMAIL = "daoudaba679@gmail.com"
  
-        SONAR_TOKEN = credentials('sonar_db')
+        SONAR_TOKEN = credentials('sonar_token')
 
         SONARQUBE_ENV = 'SonarQubeServer' // Nom configuré dans Jenkins
         SCANNER_TOOL = 'SonarQube_Scanner' // Nom du scanner ajouté dans Global Tool Configuration
@@ -44,12 +44,12 @@ stage('SonarQube Analysis') {
             steps {
                 echo "Analyse du code avec SonarQube"
                 withSonarQubeEnv('SonarQube_Local') {
-                    withCredentials([string(credentialsId: 'sonar_db', variable: 'SONAR_TOKEN')]) {
+                    withCredentials([string(credentialsId: 'sonar_token', variable: 'SONAR_TOKEN')]) {
                         bat """
                             ${tool('SonarQube_Scanner')}/bin/sonar-scanner \
                             -Dsonar.projectKey=sonarqube \
                             -Dsonar.sources=. \
-                            -Dsonar.host.url=$SONAR_HOST_URL \
+                            -Dsonar.host.url=http://localhost:9000 \
                             -Dsonar.login=$SONAR_TOKEN
                         """
                 script {
@@ -61,7 +61,7 @@ stage('SonarQube Analysis') {
                         bat """
                             "${scannerHome}\\bin\\sonar-scanner" ^
                             -Dsonar.projectKey=gestion-smartphones ^
-                            -Dsonar.projectName="Gestion Smartphones" ^
+                            -Dsonar.projectName="gestion-smartphone" ^
                             -Dsonar.sources=. ^
                             -Dsonar.host.url=${SONAR_HOST_URL} ^
                             -Dsonar.login=${SONAR_AUTH_TOKEN}
