@@ -10,7 +10,7 @@ pipeline {
 
         SONARQUBE_ENV = 'SonarQubeServer' // Nom configuré dans Jenkins
         SCANNER_TOOL = 'SonarQube_Scanner' // Nom du scanner ajouté dans Global Tool Configuration
-  (J'ai modifié mon fichier jenkinsfile à nouveau)
+ 
     }
 
     stages {
@@ -50,7 +50,7 @@ stage('SonarQube Analysis') {
                         bat """
                             ${tool('SonarQube_Scanner')}/bin/sonar-scanner \
                             -Dsonar.projectKey=sonarqube \
-                            -Dsonar.sources=. \
+                            -Dsonar.sources=. \ ^
                             -Dsonar.host.url=http://localhost:9000 \
                             -Dsonar.login=$SONAR_TOKEN
                         """
