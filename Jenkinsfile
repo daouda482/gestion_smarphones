@@ -5,7 +5,7 @@ pipeline {
     environment {
         DOCKER_COMPOSE_PATH = "C:\\Users\\bmd tech\\Documents\\gestion-smartphones\\docker-compose.yml"
         NOTIFY_EMAIL = "daoudaba679@gmail.com"
-        SONARQUBE_ENV = 'SonarQubeServer'           // Nom configuré dans Jenkins
+        SONARQUBE_ENV = 'SonarQube_Local'           // Nom configuré dans Jenkins
         SCANNER_TOOL = 'SonarQube_Scanner'         // Nom du scanner ajouté dans Global Tool Configuration
     }
 
