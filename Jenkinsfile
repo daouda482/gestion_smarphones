@@ -46,7 +46,7 @@ pipeline {
                             bat """
                                 "${scannerHome}\\bin\\sonar-scanner" ^
                                 -Dsonar.projectKey=gestion-smartphones ^
-                                -Dsonar.projectName="Gestion Smartphones" ^
+                                -Dsonar.projectName="gestion-smartphone" ^
                                 -Dsonar.sources=. ^
                                 -Dsonar.host.url=http://localhost:9000 ^
                                 -Dsonar.login=${SONAR_TOKEN}
