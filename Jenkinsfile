@@ -38,7 +38,7 @@ pipeline {
 stage('SonarQube Analysis') {
             steps {
                 echo "Analyse du code avec SonarQube"
-                withSonarQubeEnv('Sonarqube_local') {
+                withSonarQubeEnv('SonarQube_Local') {
                     withCredentials([string(credentialsId: 'SonarQube_Local', variable: 'SONAR_TOKEN')]) {
                         bat """
                             ${tool('Sonarqube_scanner')}/bin/sonar-scanner \
