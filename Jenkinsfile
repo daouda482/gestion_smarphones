@@ -1,12 +1,12 @@
+
 pipeline {
     agent any
 
     environment {
         DOCKER_COMPOSE_PATH = "C:\\Users\\bmd tech\\Documents\\gestion-smartphones\\docker-compose.yml"
         NOTIFY_EMAIL = "daoudaba679@gmail.com"
-        SONAR_TOKEN = credentials('sonar_db')
-        SONARQUBE_ENV = 'SonarQubeServer' // Nom configuré dans Jenkins
-        SCANNER_TOOL = 'SonarQube_Scanner' // Nom du scanner ajouté dans Global Tool Configuration
+        SONARQUBE_ENV = 'SonarQubeServer'           // Nom configuré dans Jenkins
+        SCANNER_TOOL = 'SonarQube_Scanner'         // Nom du scanner ajouté dans Global Tool Configuration
     }
 
     stages {
@@ -40,16 +40,20 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 echo "Analyse du code avec SonarQube"
-                withSonarQubeEnv("${SONARQUBE_ENV}") {
-                    def scannerHome = tool name: "${SCANNER_TOOL}", type: 'hudson.plugins.sonar.SonarRunnerInstallation'
-                    bat """
-                        "${scannerHome}\\bin\\sonar-scanner" ^
-                        -Dsonar.projectKey=gestion-smartphones ^
-                        -Dsonar.projectName="Gestion Smartphones" ^
-                        -Dsonar.sources=. ^
-                        -Dsonar.host.url=http://localhost:9000 ^
-                        -Dsonar.login=${SONAR_TOKEN}
-                    """
+                withCredentials([string(credentialsId: 'sonar_token', variable: 'sonar_token')]) {
+                    withSonarQubeEnv("${SONARQUBE_ENV}") {
+                        script {
+                            def scannerHome = tool name: "${SCANNER_TOOL}", type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+                            bat """
+                                "${scannerHome}\\bin\\sonar-scanner" ^
+                                -Dsonar.projectKey=gestion-smartphones ^
+                                -Dsonar.projectName="gestion-smartphone" ^
+                                -Dsonar.sources=. ^
+                                -Dsonar.host.url=http://localhost:9000 ^
+                                -Dsonar.login=${SONAR_TOKEN}
+                            """
+                        }
+                    }
                 }
             }
         }
