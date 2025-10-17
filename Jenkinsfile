@@ -9,7 +9,7 @@ pipeline {
 
         SONARQUBE_ENV = 'SonarQubeServer' // Nom configuré dans Jenkins
         SCANNER_TOOL = 'SonarQube_Scanner' // Nom du scanner ajouté dans Global Tool Configuration
- 23269c7 (J'ai modifié mon fichier jenkinsfile à nouveau)
+  (J'ai modifié mon fichier jenkinsfile à nouveau)
     }
 
     stages {
@@ -42,7 +42,7 @@ pipeline {
 
 stage('SonarQube Analysis') {
             steps {
-<<<<<<< HEAD
+
                 echo "Analyse du code avec SonarQube"
                 withSonarQubeEnv('SonarQube_Local') {
                     withCredentials([string(credentialsId: 'sonar_db', variable: 'SONAR_TOKEN')]) {
@@ -53,7 +53,7 @@ stage('SonarQube Analysis') {
                             -Dsonar.host.url=$SONAR_HOST_URL \
                             -Dsonar.login=$SONAR_TOKEN
                         """
-=======
+
                 script {
                     // Injection de l'environnement SonarQube configuré dans Jenkins
                     withSonarQubeEnv("${SONARQUBE_ENV}") {
@@ -85,7 +85,7 @@ stage('SonarQube Analysis') {
                         } else {
                             echo "✅ Quality Gate passed!"
                         }
->>>>>>> 23269c7 (J'ai modifié mon fichier jenkinsfile à nouveau)
+(J'ai modifié mon fichier jenkinsfile à nouveau)
                     }
                 }
             }
@@ -105,13 +105,13 @@ stage('SonarQube Analysis') {
             steps {
                 echo " Envoi de la notification par mail..."
                 mail to: "${NOTIFY_EMAIL}",
-<<<<<<< HEAD
+
                      subject: " Jenkins Build Notification",
                      body: "Le build et le déploiement Jenkins se sont terminés avec succès !"
-=======
+
                      subject: "Jenkins Build Notification",
                      body: "✅ Jenkins build and deployment completed successfully."
->>>>>>> 23269c7 (J'ai modifié mon fichier jenkinsfile à nouveau)
+ (J'ai modifié mon fichier jenkinsfile à nouveau)
             }
         }
     }
