@@ -41,7 +41,7 @@ pipeline {
             steps {
                 echo "Analyse du code avec SonarQube"
                 withSonarQubeEnv("${SONARQUBE_ENV}") {
-                    def scannerHome = tool name: "${SCANNER_TOOL}", type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+                    def scannerHome = tool name: "${SoanrQube_ScannerL}", type: 'hudson.plugins.sonar.SonarRunnerInstallation'
                     bat """
                         "${scannerHome}\\bin\\sonar-scanner" ^
                         -Dsonar.projectKey=gestion-smartphones ^
