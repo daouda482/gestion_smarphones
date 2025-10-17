@@ -12,7 +12,6 @@ pipeline {
         SCANNER_TOOL = 'SonarQube_Scanner' // Nom du scanner ajouté dans Global Tool Configuration
  
     }
-
     stages {
 
         stage('Checkout') {
