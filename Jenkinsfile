@@ -50,7 +50,7 @@ stage('SonarQube Analysis') {
                             ${tool('SonarQube_Scanner')}/bin/sonar-scanner \
                             -Dsonar.projectKey=sonarqube \
                             -Dsonar.sources=. \
-                            -Dsonar.host.url=$SONAR_HOST_URL \
+                            -Dsonar.host.url=http://localhost:9000 \
                             -Dsonar.login=$SONAR_TOKEN
                         """
 
