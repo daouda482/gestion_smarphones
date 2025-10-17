@@ -39,7 +39,7 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 echo "Analyse du code avec SonarQube"
-                withCredentials([string(credentialsId: 'sonar_db1', variable: 'SONAR_TOKEN')]) {
+                withCredentials([string(credentialsId: 'sonar_db1', variable: 'sonar_db1')]) {
                     withSonarQubeEnv("${SONARQUBE_ENV}") {
                         script {
                             def scannerHome = tool name: "${SCANNER_TOOL}", type: 'hudson.plugins.sonar.SonarRunnerInstallation'
