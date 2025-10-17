@@ -51,7 +51,7 @@ stage('SonarQube Analysis') {
                     withCredentials([string(credentialsId: 'sonar_db', variable: 'SONAR_TOKEN')]) {
                         bat """
                             ${tool('SonarQube_Scanner')}/bin/sonar-scanner \
-                            -Dsonar.projectKey=sonarqube \
+                            -Dsonar.projectKey=sonar_db1 \
                             -Dsonar.sources=. \
                             -Dsonar.host.url=http://localhost:9000 \
                             -Dsonar.login=$SONAR_TOKEN
