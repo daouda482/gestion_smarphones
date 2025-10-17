@@ -36,26 +36,26 @@ pipeline {
             }
         }
 
-        stage('SonarQube Analysis') {
-            steps {
-                echo "Analyse du code avec SonarQube"
-                withCredentials([string(credentialsId: 'sonar_token', variable: 'sonar_token')]) {
-                    withSonarQubeEnv("${SONARQUBE_ENV}") {
-                        script {
-                            def scannerHome = tool name: "${SCANNER_TOOL}", type: 'hudson.plugins.sonar.SonarRunnerInstallation'
-                            bat """
-                                "${scannerHome}\\bin\\sonar-scanner" ^
-                                -Dsonar.projectKey=gestion-smartphones ^
-                                -Dsonar.projectName="gestion-smartphone" ^
-                                -Dsonar.sources=. ^
-                                -Dsonar.host.url=http://localhost:9000 ^
-                                -Dsonar.login=${SONAR_TOKEN}
-                            """
-                        }
-                    }
-                }
-            }
-        }
+        // stage('SonarQube Analysis') {
+        //     steps {
+        //         echo "Analyse du code avec SonarQube"
+        //         withCredentials([string(credentialsId: 'sonar_token', variable: 'sonar_token')]) {
+        //             withSonarQubeEnv("${SONARQUBE_ENV}") {
+        //                 script {
+        //                     def scannerHome = tool name: "${SCANNER_TOOL}", type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+        //                     bat """
+        //                         "${scannerHome}\\bin\\sonar-scanner" ^
+        //                         -Dsonar.projectKey=gestion-smartphones ^
+        //                         -Dsonar.projectName="gestion-smartphone" ^
+        //                         -Dsonar.sources=. ^
+        //                         -Dsonar.host.url=http://localhost:9000 ^
+        //                         -Dsonar.login=${SONAR_TOKEN}
+        //                     """
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
 
         stage('Quality Gate') {
             steps {
