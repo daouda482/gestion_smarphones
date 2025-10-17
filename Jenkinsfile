@@ -39,7 +39,7 @@ stage('SonarQube Analysis') {
             steps {
                 echo "Analyse du code avec SonarQube"
                 withSonarQubeEnv('SonarQube_Local') {
-                    withCredentials([string(credentialsId: 'SonarQube_Local', variable: 'SONAR_TOKEN')]) {
+                    withCredentials([string(credentialsId: 'sonar_db', variable: 'SONAR_TOKEN')]) {
                         bat """
                             ${tool('Sonarqube_scanner')}/bin/sonar-scanner \
                             -Dsonar.projectKey=sonarqube \
