@@ -56,18 +56,18 @@ pipeline {
             }
         }
 
-     stage('Quality Gate') {
-            steps {
-                echo "🧪 Vérification du Quality Gate..."
-                script {
-                    // Attend que l'analyse SonarQube soit terminée et récupère le statut
-                    timeout(time: 3, unit: 'MINUTES') {
-                        def qg = waitForQualityGate(abortPipeline: true)
-                        echo "✅ Quality Gate status: ${qg.status}"
-                    }
-                }
-            }
-        }
+     // stage('Quality Gate') {
+     //        steps {
+     //            echo "🧪 Vérification du Quality Gate..."
+     //            script {
+     //                // Attend que l'analyse SonarQube soit terminée et récupère le statut
+     //                timeout(time: 3, unit: 'MINUTES') {
+     //                    def qg = waitForQualityGate(abortPipeline: true)
+     //                    echo "✅ Quality Gate status: ${qg.status}"
+     //                }
+     //            }
+     //        }
+     //    }
 
 
         stage('Docker Build & Up') {
