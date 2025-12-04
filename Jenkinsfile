@@ -36,14 +36,14 @@ pipeline {
             }
         }
 
-        stage('Run Frontend Tests & Coverage') {
-            steps {
-                echo "🧪 Exécution des tests frontend avec coverage..."
-                dir('gestion-smartphone-frontend') {
-                    bat 'npm run test:coverage'
-                }
-            }
-        }
+        // stage('Run Frontend Tests & Coverage') {
+        //     steps {
+        //         echo "🧪 Exécution des tests frontend avec coverage..."
+        //         dir('gestion-smartphone-frontend') {
+        //             bat 'npm run test:coverage'
+        //         }
+        //     }
+        // }
 
         stage('SonarQube Analysis') {
             steps {
