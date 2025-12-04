@@ -4,12 +4,12 @@ pipeline {
     environment {
         DOCKER_COMPOSE_PATH = "C:\\Users\\bmd tech\\Documents\\gestion-smartphones\\docker-compose.yml"
         NOTIFY_EMAIL = "daoudaba679@gmail.com"
-<<<<<<< HEAD
+
         SONAR_TOKEN = credentials('sonar_id')
-=======
+
         SONARQUBE_ENV = 'SonarQubeServer' // Nom configuré dans Jenkins
         SCANNER_TOOL = 'SonarScanner' // Nom du scanner ajouté dans Global Tool Configuration
->>>>>>> 23269c7 (J'ai modifié mon fichier jenkinsfile à nouveau)
+23269c7 (J'ai modifié mon fichier jenkinsfile à nouveau)
     }
 
     stages {
