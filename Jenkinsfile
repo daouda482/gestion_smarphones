@@ -38,7 +38,7 @@ pipeline {
 
         stage('Run Frontend Tests & Coverage') {
             steps {
-                echo "🧪 Exécution des tests frontend et génération du coverage..."
+                echo "🧪 Exécution des tests frontend avec coverage..."
                 dir('gestion-smartphone-frontend') {
                     bat 'npm run test:coverage'
                 }
@@ -48,10 +48,18 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 echo "🔍 Analyse du code avec SonarQube..."
-                withSonarQubeEnv("${SONARQUBE_ENV}") {
-                    bat """
-                        "${tool SONAR_SCANNER}\\bin\\sonar-scanner"
-                    """
+                dir('gestion-smartphone-frontend') {
+                    withSonarQubeEnv("${SONARQUBE_ENV}") {
+                        // Le scanner prend automatiquement le coverage généré par Vitest
+                        bat """
+                            "${tool SONAR_SCANNER}\\bin\\sonar-scanner" ^
+                            -Dsonar.projectKey=gestion-smartphones ^
+                            -Dsonar.sources=. ^
+                            -Dsonar.host.url=%SONAR_HOST_URL% ^
+                            -Dsonar.login=%SONAR_TOKEN% ^
+                            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+                        """
+                    }
                 }
             }
         }
@@ -59,7 +67,7 @@ pipeline {
         stage('Quality Gate') {
             steps {
                 script {
-                    timeout(time: 5, unit: 'MINUTES') { // Augmenté à 5min pour éviter timeout
+                    timeout(time: 5, unit: 'MINUTES') { // Évite le timeout
                         def qg = waitForQualityGate()
                         echo "Quality Gate Status : ${qg.status}"
                         if (qg.status != 'OK') {
